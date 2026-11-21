@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://campingeleden.cl/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://campingeleden.cl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://campingeleden.cl/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://campingeleden.cl/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://campingeleden.cl/"/>
+  </url>
+  <url>
+    <loc>https://campingeleden.cl/blog/de-santiago-a-isla-de-maipo.html</loc>
+    <lastmod>2026-11-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://campingeleden.cl/blog/que-hacer-en-isla-de-maipo.html</loc>
+    <lastmod>2026-11-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://campingeleden.cl/blog/acampar-en-familia-primera-vez.html</loc>
+    <lastmod>2026-11-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+</urlset>
