@@ -1020,7 +1020,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
           <div class="fila"><svg class="ico"><use href="#i-pin"/></svg><span><b data-i="d_dir">Dirección:</b> Calle Crucero 488, La Villita, Isla de Maipo, <span data-i="d_rm">Región Metropolitana</span>.</span></div>
           <div class="fila"><svg class="ico"><use href="#i-clock"/></svg><span><b data-i="d_hor">Horario:</b> <span data-i="d_horv">abierto todos los días, 24 horas.</span></span></div>
           <div class="fila"><svg class="ico"><use href="#i-car"/></svg><span><b data-i="d_auto">En auto:</b> <span data-i="d_autov">aprox. 55 km y 1 hora desde Santiago centro por Ruta 78.</span></span></div>
-          <div class="fila"><svg class="ico ico--f"><use href="#i-wa"/></svg><span><b data-i="d_wa">Teléfono y WhatsApp:</b> <a data-tel="show" href="tel:+56945299443">+56 9 4529 9443</a></span></div>
+          <div class="fila"><svg class="ico ico--f"><use href="#i-wa"/></svg><span><b data-i="d_wa">Teléfono y WhatsApp:</b> <a data-wa data-tel="show" href="https://wa.me/56945299443" target="_blank" rel="noopener">+56 9 4529 9443</a></span></div>
         </div>
       </div>
     </div>
@@ -1091,7 +1091,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
       <p class="sec__b rv" data-i="con_b">Completa el formulario y se abrirá WhatsApp con tu mensaje listo para enviar. Te confirmamos disponibilidad y valores para tu fecha.</p>
       <div class="datos">
         <div class="dato rv"><span class="dato__i"><svg class="ico"><use href="#i-pin"/></svg></span><div><b data-i="dt1">Dirección</b><p>Calle Crucero 488, La Villita<br>Isla de Maipo, <span data-i="d_rm">Región Metropolitana</span></p></div></div>
-        <div class="dato rv"><span class="dato__i"><svg class="ico ico--f"><use href="#i-wa"/></svg></span><div><b data-i="dt2">Teléfono y WhatsApp</b><p><a data-tel="show" href="tel:+56945299443">+56 9 4529 9443</a></p></div></div>
+        <div class="dato rv"><span class="dato__i"><svg class="ico ico--f"><use href="#i-wa"/></svg></span><div><b data-i="dt2">Teléfono y WhatsApp</b><p><a data-wa data-tel="show" href="https://wa.me/56945299443" target="_blank" rel="noopener">+56 9 4529 9443</a></p></div></div>
         <div class="dato rv" data-solo="es"><span class="dato__i"><svg class="ico"><use href="#i-mail"/></svg></span><div><b>Correo</b><p><a href="mailto:administracion@xn--centrotursticocampingeleden-qrc.cl">administracion@centroturísticocampingeleden.cl</a></p></div></div>
         <div class="dato rv"><span class="dato__i"><svg class="ico"><use href="#i-clock"/></svg></span><div><b data-i="dt4">Horario</b><p data-i="dt4v">Abierto todos los días, 24 horas</p></div></div>
       </div>
@@ -1211,7 +1211,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
         <h4 data-i="pie_h3">Contacto</h4>
         <ul>
           <li>Calle Crucero 488, La Villita<br>Isla de Maipo, RM</li>
-          <li><a data-tel="show" href="tel:+56945299443">+56 9 4529 9443</a></li>
+          <li><a data-wa data-tel="show" href="https://wa.me/56945299443" target="_blank" rel="noopener">+56 9 4529 9443</a></li>
           <li data-solo="es"><a href="mailto:administracion@xn--centrotursticocampingeleden-qrc.cl">Escríbenos por correo</a></li>
           <li><a href="https://www.google.com/maps/search/?api=1&amp;query=Calle+Crucero+488,+La+Villita,+Isla+de+Maipo,+Chile" target="_blank" rel="noopener" data-i="pie_maps">Ver en Google Maps</a></li>
           <li data-i="dt4v">Abierto todos los días, 24 horas</li>
@@ -1531,7 +1531,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
     $$("[data-wa]").forEach(function(a){ a.href = waUrl(mensajeBoton()); });
     $$("[data-tel]").forEach(function(el){
       var num = "+" + numeroContacto();
-      if(el.tagName === "A") el.href = "tel:" + num;
+      if(el.tagName === "A" && !el.hasAttribute("data-wa")) el.href = "tel:" + num;
       if(el.getAttribute("data-tel") !== "") el.textContent = telefonoContacto();
     });
     $$("[data-solo]").forEach(function(el){ el.hidden = el.getAttribute("data-solo") !== idioma; });
