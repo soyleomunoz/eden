@@ -432,6 +432,8 @@ body.cambiando main,body.cambiando .nav__menu a,body.cambiando footer{opacity:.2
 .tarifa__f b{font-family:var(--serif);font-weight:600;font-size:clamp(1.5rem,3vw,2rem);color:#fff;white-space:nowrap}
 .tarifa__nota{margin-top:18px;font-size:.84rem;color:rgba(255,255,255,.62)}
 .tinajas .acciones{margin-top:30px}
+.tarifa__pago{width:100%;margin-top:20px}
+[data-pago][hidden]{display:none!important}
 .lista-check{list-style:none;display:grid;gap:10px;margin-top:24px}
 .lista-check li{display:flex;gap:10px;align-items:flex-start;font-size:.96rem}
 .lista-check .ico{color:var(--yellow);font-size:1.15rem;margin-top:3px}
@@ -956,9 +958,10 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
     </div>
     <div class="tarifa rv rv--der">
       <div class="tarifa__cab"><svg class="ico"><use href="#i-moon"/></svg><span data-i="tar_cab">Tarifa nocturna</span></div>
-      <div class="tarifa__f"><span data-i="tar1">Tinajas y sauna, por persona</span><b data-i="tar1v"><span data-precio="15000">$15.000</span></b></div>
-      <div class="tarifa__f"><span data-i="tar2">Desde 4 personas, cada una</span><b data-i="tar2v"><span data-precio="10000">$10.000</span></b></div>
+      <div class="tarifa__f"><span data-i="tar1">Tinajas y sauna, por persona</span><b data-i="tar1v"><span data-precio="15000" data-producto="tinaja">$15.000</span></b></div>
+      <div class="tarifa__f"><span data-i="tar2">Desde 4 personas, cada una</span><b data-i="tar2v"><span data-precio="10000" data-producto="tinaja4">$10.000</span></b></div>
       <div class="tarifa__f"><span data-i="tar3">Acceso libre</span><b>21:00 — 01:00</b></div>
+      <a class="btn btn--p tarifa__pago" data-pago href="#" target="_blank" rel="noopener" hidden><span data-i="pagar">Pagar mi reserva</span><svg class="ico ico--mov"><use href="#i-arrow"/></svg></a>
       <p class="tarifa__nota" data-i="tar_nota">Valores referenciales: te los confirmamos al momento de reservar.</p>
     </div>
   </div>
@@ -980,7 +983,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
     </div>
     <div class="planes__pie rv">
       <div><h3 data-i="mod_pie_t">Te enviamos los valores vigentes para tu fecha</h3><p data-i="mod_pie">Los valores cambian según temporada y cantidad de personas. Pagos disponibles con Flow.</p></div>
-      <div class="acciones"><a class="btn btn--wa" data-wa href="https://wa.me/56945299443" target="_blank" rel="noopener"><svg class="ico ico--f"><use href="#i-wa"/></svg><span data-i="mod_cta">Pedir valores por WhatsApp</span></a></div>
+      <div class="acciones"><a class="btn btn--wa" data-wa href="https://wa.me/56945299443" target="_blank" rel="noopener"><svg class="ico ico--f"><use href="#i-wa"/></svg><span data-i="mod_cta">Pedir valores por WhatsApp</span></a><a class="btn btn--p" data-pago href="#" target="_blank" rel="noopener" hidden><span data-i="pagar">Pagar mi reserva</span><svg class="ico ico--mov"><use href="#i-arrow"/></svg></a></div>
     </div>
   </div>
 </section>
@@ -1284,6 +1287,28 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
      Actualiza el tipo de cambio aquí (pesos chilenos por 1 unidad de moneda). Referencia: 21-11-2026. */
   var TIPO_CAMBIO = { USD:1013, BRL:171 };
   var MONEDA = { es:"CLP", en:"USD", pt:"BRL" };
+
+  /* ===== PASARELAS DE PAGO Y LISTAS DE PRECIOS (estructura en blanco, inactiva) =====
+     Canal "nacional": sitio en español y visitante chileno → pasarela de Verito (pesos chilenos).
+     Canal "extranjero": quien marca "Soy extranjero/a" o ve el sitio en inglés/portugués → pasarela de Leonardo.
+     - pasarela: enlace de pago. Si está vacío, los botones de pago no aparecen.
+     - precios: montos exactos que cobra esa pasarela. Si un precio está en null, se usa la conversión de arriba (TIPO_CAMBIO).
+     - preciosBRL: lista opcional en reales para el sitio en portugués, solo si la pasarela extranjera cobra en reales.
+     Productos: tinaja = tinajas y sauna por persona · tinaja4 = desde 4 personas, por persona
+                fullday · fullday_comida · noche1 = 2 días / 1 noche · noche2 = 3 días / 2 noches */
+  var PAGOS = {
+    nacional: {
+      pasarela: "",
+      moneda: "CLP",
+      precios: { tinaja:null, tinaja4:null, fullday:null, fullday_comida:null, noche1:null, noche2:null }
+    },
+    extranjero: {
+      pasarela: "",
+      moneda: "USD",
+      precios: { tinaja:null, tinaja4:null, fullday:null, fullday_comida:null, noche1:null, noche2:null },
+      preciosBRL: { tinaja:null, tinaja4:null, fullday:null, fullday_comida:null, noche1:null, noche2:null }
+    }
+  };
   var IDIOMA_POR_DEFECTO = "es";
 
   /* ================= TRADUCCIONES ================= */
@@ -1338,7 +1363,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
       tin_k:"Night-time service · Campers only", tin_t:"Outdoor hot water, when the campground <em>falls quiet</em>",
       tin_b:"When the day is over and the kids are asleep, the other plan begins. Hot tubs and a dry sauna under the open sky, with free access during opening hours: go in, step out and come back as often as you like.",
       tin_l1:"Hot tubs and dry sauna during the same hours", tin_l2:"Free access from 21:00 to 01:00", tin_l3:"Exclusively for campers staying overnight", tin_cta:"Check availability",
-      tar_cab:"Night rate", tar1:"Hot tubs and sauna, per person", tar1v:"<span data-precio=\"15000\"></span>", tar2:"Groups of 4+, per person", tar2v:"<span data-precio=\"10000\"></span>", tar3:"Free access", tar_nota:"Approximate prices in US dollars, converted from Chilean pesos (CLP $15,000 and CLP $10,000). We'll confirm the final amount when you book.",
+      tar_cab:"Night rate", tar1:"Hot tubs and sauna, per person", tar1v:"<span data-precio=\"15000\" data-producto=\"tinaja\"></span>", tar2:"Groups of 4+, per person", tar2v:"<span data-precio=\"10000\" data-producto=\"tinaja4\"></span>", tar3:"Free access", tar_nota:"Approximate prices in US dollars, converted from Chilean pesos (CLP $15,000 and CLP $10,000). We'll confirm the final amount when you book.",
       mod_k:"Options", mod_t:"For the day or the <em>whole weekend</em>", mod_b:"Four ways to visit us, with separate rates for adults and children.",
       m1t:"Full day", m1:"A full day with access to the pools, green areas, games and picnic areas.",
       m2t:"Full day with meal", m2:"The same day pass, with food included. Arrive and forget about lunch.",
@@ -1395,7 +1420,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
       form_ok:"Done! WhatsApp is open with your message. Just press send.",
       form_block:"Your browser blocked the WhatsApp window. <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">Open the message here</a>.",
       wa_hola:"Hi! My name is {n} and I'd like to visit Camping El Edén.", wa_origen:"Origin: {v}.", wa_mod:"Option: {v}.", wa_fecha:"Preferred date: {v}.", wa_pers:"Number of guests: {v}.", wa_com:"Comments: {v}", wa_tel:"My phone: {v}.", wa_fin:"Could you confirm availability and rates?",
-      nota_cta:"Plan my visit",
+      nota_cta:"Plan my visit", pagar:"Pay for my booking",
       pp_aviso:"This privacy policy is published in Spanish, which is its governing version under Chilean law. If you have any questions, message us on WhatsApp in English."
     },
     pt:{
@@ -1436,7 +1461,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
       tin_k:"Serviço noturno · Só para campistas", tin_t:"Água quente ao ar livre, quando o camping <em>fica em silêncio</em>",
       tin_b:"Quando o dia termina e as crianças já dormem, começa o outro programa. Ofurôs de água quente e sauna seca sob o céu aberto, com acesso livre dentro do horário: entre, saia e volte quantas vezes quiser.",
       tin_l1:"Ofurôs de água quente e sauna seca no mesmo horário", tin_l2:"Acesso livre das 21h à 1h", tin_l3:"Exclusivo para campistas hospedados", tin_cta:"Consultar disponibilidade",
-      tar_cab:"Tarifa noturna", tar1:"Ofurôs e sauna, por pessoa", tar1v:"<span data-precio=\"15000\"></span>", tar2:"A partir de 4 pessoas, cada", tar2v:"<span data-precio=\"10000\"></span>", tar3:"Acesso livre", tar_nota:"Valores aproximados em reais, convertidos de pesos chilenos (CLP $15.000 e CLP $10.000). Confirmamos o valor final na hora da reserva.",
+      tar_cab:"Tarifa noturna", tar1:"Ofurôs e sauna, por pessoa", tar1v:"<span data-precio=\"15000\" data-producto=\"tinaja\"></span>", tar2:"A partir de 4 pessoas, cada", tar2v:"<span data-precio=\"10000\" data-producto=\"tinaja4\"></span>", tar3:"Acesso livre", tar_nota:"Valores aproximados em reais, convertidos de pesos chilenos (CLP $15.000 e CLP $10.000). Confirmamos o valor final na hora da reserva.",
       mod_k:"Modalidades", mod_t:"Por um dia ou o <em>fim de semana inteiro</em>", mod_b:"Quatro formas de nos visitar, com tarifas diferentes para adultos e crianças.",
       m1t:"Day use", m1:"Dia inteiro com acesso às piscinas, áreas verdes, jogos e áreas de piquenique.",
       m2t:"Day use com refeição", m2:"O mesmo ingresso do dia, com alimentação incluída. Chegue e esqueça o almoço.",
@@ -1493,7 +1518,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
       form_ok:"Pronto! Abrimos o WhatsApp com sua mensagem escrita. Só falta tocar em enviar.",
       form_block:"Seu navegador bloqueou a janela do WhatsApp. <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">Abra a mensagem aqui</a>.",
       wa_hola:"Olá! Meu nome é {n} e quero visitar o Camping El Edén.", wa_origen:"Procedência: {v}.", wa_mod:"Modalidade: {v}.", wa_fecha:"Data prevista: {v}.", wa_pers:"Número de pessoas: {v}.", wa_com:"Comentário: {v}", wa_tel:"Meu telefone: {v}.", wa_fin:"Podem confirmar disponibilidade e valores?",
-      nota_cta:"Reservar minha visita",
+      nota_cta:"Reservar minha visita", pagar:"Pagar minha reserva",
       pp_aviso:"Esta política de privacidade é publicada em espanhol, que é a versão válida segundo a lei chilena. Se tiver dúvidas, fale com a gente pelo WhatsApp em português."
     }
   };
@@ -1522,7 +1547,28 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
     var v = Math.round(clp / TIPO_CAMBIO[m]);
     return m === "USD" ? "US$" + v : "R$ " + v.toLocaleString("pt-BR");
   }
-  function pintarPrecios(){ $$("[data-precio]").forEach(function(el){ el.textContent = precio(el.getAttribute("data-precio")); }); }
+  function canalPago(){ return (origen === "ext" || idioma !== "es") ? "extranjero" : "nacional"; }
+  function formatear(v, m){
+    if(m === "CLP") return "$" + Number(v).toLocaleString("es-CL");
+    if(m === "BRL") return "R$ " + Number(v).toLocaleString("pt-BR");
+    return "US$" + Number(v).toLocaleString("en-US");
+  }
+  // Precio fijo de la lista del canal, si existe; si no, null (se usa la conversión)
+  function precioLista(prod){
+    var c = PAGOS[canalPago()];
+    if(!prod || !c) return null;
+    if(idioma === "pt" && c.preciosBRL && c.preciosBRL[prod] != null) return formatear(c.preciosBRL[prod], "BRL");
+    if(c.precios[prod] != null) return formatear(c.precios[prod], c.moneda);
+    return null;
+  }
+  function pintarPrecios(){
+    $$("[data-precio]").forEach(function(el){
+      el.textContent = precioLista(el.getAttribute("data-producto")) || precio(el.getAttribute("data-precio"));
+    });
+    // Botones de pago: solo aparecen si el canal tiene pasarela configurada
+    var url = PAGOS[canalPago()].pasarela;
+    $$("[data-pago]").forEach(function(a){ a.hidden = !url; if(url) a.href = url; });
+  }
   function waUrl(texto, numero){ return "https://wa.me/" + (numero || numeroContacto()) + "?text=" + encodeURIComponent(texto); }
 
   document.getElementById("anio").textContent = new Date().getFullYear();
@@ -1797,6 +1843,7 @@ html.bloqueo,html.bloqueo body{overflow:hidden}
     origen = v;
     guardar("eden-origen", v);
     actualizarContacto();
+    pintarPrecios();
   }
   function abrirWa(url){
     var v = window.open(url, "_blank", "noopener");
